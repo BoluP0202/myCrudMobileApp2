@@ -1,3 +1,4 @@
+import moment from "moment";
 import React from "react";
 import { DataSource, Repository } from "typeorm";
 import { TransactionEntry } from "../entities/transaction-entry.entity";
@@ -8,22 +9,14 @@ export const getTransactionEntries = async (dataSource: DataSource, setTransacti
     try {
         const transactionEntryRepository: Repository<TransactionEntry> = dataSource.getRepository(TransactionEntry);
         let transactionEntries = await transactionEntryRepository.find();
-        //Below really should not be here. It is just to load some fictitious data for quick test of our data source.
-        /*if (transactionEntries.length === 0) {
-            const newTransactionEntry = new TransactionEntry();
-            newTransactionEntry.description = 'Just a sample entry';
-            newTransactionEntry.amount = 1000;
-            await transactionEntryRepository.save(newTransactionEntry);
-            transactionEntries = await transactionEntryRepository.find();
-        }*/
         setTransactionEntries(transactionEntries);
     } catch (error) {
         setTransactionEntries([]); //None available due to error
     }
 }
 
-export const createTransactionEntry = async (dataSource: DataSource, transactionEntryData: TransactionEntry, transactionEntriesInState: TransactionEntry[], setTransactionEntries: React.Dispatch<React.SetStateAction<TransactionEntry[]>>, setOnAddEntry: React.Dispatch<React.SetStateAction<boolean>>) => {
-
+export const createTransactionEntry = async (dataSource: DataSource, transactionEntryData: TransactionEntry, transactionEntriesInState: TransactionEntry[], setTransactionEntries: React.Dispatch<React.SetStateAction<TransactionEntry[]>>, navigation: {navigate: Function}) => {
+    
     try {
         const transactionEntryRepository: Repository<TransactionEntry> = dataSource.getRepository(TransactionEntry);
         const newTransactionEntry = transactionEntryRepository.create(transactionEntryData);
@@ -32,11 +25,34 @@ export const createTransactionEntry = async (dataSource: DataSource, transaction
         const transactionEntries = transactionEntriesInState;
         transactionEntries.push(transactionEntry);
         setTransactionEntries(transactionEntries);
-        setOnAddEntry(false);
+        //setOnAddEntry(false);
+        navigation.navigate('TransactionEntryHomeScreen',{})//adding the second argument forces the destination to update immediately
     } catch (error) {
         console.log(error);
     }
 };
+
+export const updateTransactionEntry = async (dataSource: DataSource, updatedTransactionEntryData: TransactionEntry, transactionEntriesInState: TransactionEntry[], setTransactionEntries: React.Dispatch<React.SetStateAction<TransactionEntry[]>>, navigation: {navigate: Function}) => {
+    const {id, ...otherFields} = updatedTransactionEntryData;
+    
+    try {
+        const transactionEntryRepository: Repository<TransactionEntry> = dataSource.getRepository(TransactionEntry);
+        await transactionEntryRepository.update(id, otherFields);
+        
+        //adjust entry in state
+        const currentEntries = transactionEntriesInState;
+        //find the index corresponding to the item with the passed id
+        const index = currentEntries.findIndex((entry) => entry.id === id);
+        //replace with new data
+        currentEntries[index] = updatedTransactionEntryData;
+        
+        //update state with the updated
+        setTransactionEntries([...currentEntries]);
+        navigation.navigate('TransactionEntryHomeScreen',{})//adding the second argument forces the destination to update immediately
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 export const deleteTransactionEntry = async (dataSource: DataSource, id: number, transactionEntriesInState: TransactionEntry[], setTransactionEntries: React.Dispatch<React.SetStateAction<TransactionEntry[]>>) => {
     try {
@@ -64,7 +80,7 @@ export const deleteTransactionEntry = async (dataSource: DataSource, id: number,
  export const transformEntriesToDateSections = (entries: ITransactionEntry[]): EntriesInDateSections[] => {
     //first get distinct txnDates in entry. See https://codeburst.io/javascript-array-distinct-5edc93501dc4 for ideas on how to use ...new Set
     const distinctTxnDates = [...new Set(entries.map(entry => {
-      const txnDate = new Date(entry.txnYear!, entry.txnMonth!, entry.txnDay!).toLocaleDateString('en-GB');
+      const txnDate = moment([entry.txnYear!, entry.txnMonth!, entry.txnDay!]).format('LL');
       return txnDate;
     }))];
 
@@ -73,7 +89,7 @@ export const deleteTransactionEntry = async (dataSource: DataSource, id: number,
 
       let dataOnTxnDate: ITransactionEntry[] = [];
       entries.map((entry) => {
-        const txnDate = new Date(entry.txnYear!, entry.txnMonth!, entry.txnDay!).toLocaleDateString('en-GB');
+        const txnDate = moment([entry.txnYear!, entry.txnMonth!, entry.txnDay!]).format('LL');
         if (txnDate == distinctTxnDate) {
           dataOnTxnDate.push(entry)
         }
