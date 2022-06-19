@@ -129,10 +129,10 @@ const TransactionEntryHome: React.FC<Props> = ({ dataSource }) => {
 
     return (
         <>
-          <Text h2>My Personal Transactions</Text>
+          <Text h2 style={{paddingTop: 14}}>My Personal Transactions</Text>
           
           {/* The View below wraps a menu made up of two menu items - Add new and Settings. We could have used React Navigation to better handle this */}
-          <View style={{ flexDirection: 'row', padding: 9 }}>
+          <View style={{ flexDirection: 'row', padding: 6 }}>
             {!onAddEntry &&
               <Button
                 icon={
@@ -173,7 +173,7 @@ const TransactionEntryHome: React.FC<Props> = ({ dataSource }) => {
           {displayEntries()}
     
           {/* Below is just a footer message */}
-          <Text style={{ fontSize: 14, fontStyle: "italic", paddingTop: 10 }}>Copyright: Pius Onobhayedo</Text>
+          <Text style={{ fontSize: 14, fontStyle: "italic", paddingTop: 10 }}>Copyright: Pius Onobhayedo Released to ISM 210 class </Text>
           </>
       );
     }

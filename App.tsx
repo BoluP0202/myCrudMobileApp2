@@ -43,12 +43,12 @@ const App: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: { fontSize: 16, color: 'black' },
+  title: { fontSize: 14, color: 'black' },
 });
 
 export default App;
