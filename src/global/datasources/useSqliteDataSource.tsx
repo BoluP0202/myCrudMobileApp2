@@ -5,6 +5,7 @@ import { Category } from '../../modules/examples/entities/category.entity';
 import { Post } from '../../modules/examples/entities/post.entity';
 import { TransactionEntry } from '../../modules/transaction-entries/entities/transaction-entry.entity';
 
+
 const dataSource = new DataSource({
     database: "personal_transaction_manager.db",
     driver: require('expo-sqlite'),
@@ -13,7 +14,8 @@ const dataSource = new DataSource({
         Post,
         Category,
         Author,
-        TransactionEntry
+        TransactionEntry,
+
     ],
     synchronize: true,
     type: "expo",

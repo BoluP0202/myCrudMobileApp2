@@ -3,8 +3,8 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { DataSource } from 'typeorm';
-import useSqliteDataSource from '../datasources/useSqliteDataSource';
 import useSqliteDataSourcea from '../datasources/useSqliteDataSourcea';
+
 
 
 export default function useCachedResources() {
@@ -12,18 +12,18 @@ export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
   //Bring the custom hook we wrote into this Component for use. To be explained in class
-  const sqliteDataSource = useSqliteDataSource();
+  const sqliteDataSourcea = useSqliteDataSourcea();
 
-  //We need to hold the dataSource once opened, so we can pass it to components for connection.
-  const [dataSource, setDataSource] = useState<DataSource | null >(null);
+  //We need to hold the dataSourcea once opened, so we can pass it to components for connection.
+  const [dataSourcea, setDataSourcea] = useState<DataSource | null >(null);
   
   //declare the function that we will use to get data source from the hook
-  const getDataSource = async () => {
+  const getDataSourcea = async () => {
     try {
-      const dataSource = await sqliteDataSource;
-      setDataSource(dataSource); //success! save in state
+      const dataSourcea = await sqliteDataSourcea;
+      setDataSourcea(dataSourcea); //success! save in state
     } catch (error) {
-      setDataSource(null); //problem! set undefined in state
+      setDataSourcea(null); //problem! set undefined in state
     }
   }
 
@@ -39,8 +39,8 @@ export default function useCachedResources() {
           'space-mono': require('../../../assets/fonts/SpaceMono-Regular.ttf'),
         });
         
-        //Let's attempt to get dataSource here as well
-        await getDataSource();
+        //Let's attempt to get dataSourcea here as well
+        await getDataSourcea();
 
         //Here, you could also attempt to get settings in async storage. May not be necessary
 
@@ -56,6 +56,6 @@ export default function useCachedResources() {
     loadResourcesAndDataAsync();
   }, []);
 
-  return {isLoadingComplete, dataSource};
+  return {isLoadingComplete, dataSourcea};
 
 }
