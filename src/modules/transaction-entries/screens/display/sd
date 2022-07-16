@@ -1,0 +1,1 @@
+        setEntriesInState(entries.filter(i => i.description?.toLowerCase().includes(query.toLocaleLowerCase() || i.amount?.toString() == query)))

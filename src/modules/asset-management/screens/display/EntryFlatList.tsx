@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View, FlatList, StyleSheet } from 'react-native';
 import { Badge, Text } from '@rneui/base';
-
 import EntryFlatListItem from './EntryFlatListItem';
 import { IAssetEntry } from '../../types/definitions';
+import { Input, SearchBar} from '@rneui/themed'
 
 type Props = {
     entries: IAssetEntry[] | [] //array of entries
@@ -11,10 +11,21 @@ type Props = {
 
 const EntryFlatList: React.FC<Props> = ({ entries }) => {
 
+    const [query, setQuery] = useState<string>()
+
+    const [entriesInState, setEntriesInState] = useState<IAssetEntry[] | [] | null>(null)
+    
+    useEffect(() => {setEntriesInState(entries)}, [])
+    
+    const searcher = (query: any) => {
+        setQuery(query)
+        setEntriesInState(entries.filter(i => i.description?.toLowerCase().includes(query.toLocaleLowerCase())||i.value == query))
+    }
+    
     return (
         <FlatList
             style={{ width: '100%', padding: 3, backgroundColor: 'skyblue' }}
-            data={entries}
+            data={entriesInState}
             renderItem={({ item }) => (
                 <EntryFlatListItem item={item} />
             )}
@@ -22,6 +33,13 @@ const EntryFlatList: React.FC<Props> = ({ entries }) => {
                 () => (
                     <View>
                         <Text h3 style={[styles.inputContainerStyle, { backgroundColor: "lightblue" }]}>Entries so far... <Badge status="primary" value={entries.length} /></Text>
+                        <SearchBar
+                            placeholder='Enter Asset Desc...'
+                            value={query}
+                            onChangeText={(query) => {searcher(query)}}
+                            autoFocus
+                            platform = 'android'
+                        />
                     </View>
                 )}
 
